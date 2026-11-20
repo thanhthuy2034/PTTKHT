@@ -1,0 +1,400 @@
+:root {
+    color-scheme: light;
+    --ink: #18212b;
+    --paper: #fff;
+    --edge: #aeb9bf;
+    --button: #d1f8f6;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    color: var(--ink);
+    background: #f5f8fa;
+    font: 15px Arial, Helvetica, sans-serif;
+    line-height: 1.45;
+}
+
+.shell {
+    max-width: 1140px;
+    margin: 32px auto;
+    padding: 30px;
+    background: var(--paper);
+    border: 1px solid #d4dadd;
+    border-radius: 5px;
+}
+
+.shell.narrow {
+    max-width: 700px;
+}
+
+h1 {
+    margin: 0 0 28px;
+    font-size: 23px;
+    text-align: center;
+}
+
+h2 {
+    margin: 24px 0 12px;
+    font-size: 17px;
+}
+
+a {
+    color: #175c81;
+}
+
+.actions,
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.centered {
+    justify-content: center;
+}
+
+.align-end {
+    justify-content: flex-end;
+}
+
+.spaced {
+    margin-top: 24px;
+}
+
+.home {
+    padding-top: 76px;
+    padding-bottom: 44px;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.form-row label {
+    min-width: 130px;
+    font-weight: bold;
+}
+
+.condition-form .form-row {
+    display: grid;
+    grid-template-columns: 130px minmax(0, 1fr);
+    gap: 16px;
+}
+
+input,
+select {
+    min-width: 0;
+    max-width: 100%;
+    padding: 9px 10px;
+    border: 1px solid #a2adb4;
+    border-radius: 2px;
+    background: white;
+    color: var(--ink);
+    font: inherit;
+}
+
+input:not([type="hidden"]),
+select {
+    min-height: 40px;
+}
+
+input[type="date"] {
+    width: 100%;
+}
+
+#keyword {
+    width: 280px;
+}
+
+button,
+.button {
+    display: inline-block;
+    padding: 8px 15px;
+    border: 1px solid #6d9597;
+    border-radius: 2px;
+    background: var(--button);
+    color: #102f30;
+    font: inherit;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button:hover,
+.button:hover {
+    background: #b3eeee;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid #175c81;
+    outline-offset: 3px;
+}
+
+option:disabled {
+    color: #70777b;
+}
+
+.notification {
+    margin: 12px 0;
+    padding: 10px 13px;
+    border-left: 4px solid #dbab39;
+    background: #fff3d8;
+}
+
+.period {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 36px;
+    margin: 0 0 20px;
+}
+
+.period > div {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+dt {
+    font-weight: bold;
+}
+
+dd {
+    margin: 0;
+}
+
+.details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 32px;
+    margin: 0 0 22px;
+}
+
+.details > div {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+    gap: 8px;
+    align-items: baseline;
+}
+
+.details dd {
+    overflow-wrap: anywhere;
+}
+
+.table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 10px 0 22px;
+}
+
+table {
+    width: 100%;
+    margin: 10px 0 22px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.table-wrap table {
+    margin: 0;
+}
+
+.data-table {
+    min-width: 720px;
+    table-layout: fixed;
+}
+
+th,
+td {
+    padding: 10px 8px;
+    border: 1px solid #929ca2;
+    vertical-align: middle;
+    overflow-wrap: break-word;
+}
+
+th {
+    background: #f0f4f5;
+    text-align: center;
+    font-weight: bold;
+}
+
+td {
+    text-align: left;
+}
+
+td.center {
+    text-align: center;
+}
+
+td.money {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.col-stt { width: 48px; }
+.col-code { width: 9%; }
+.col-name { width: 21%; }
+.col-unit { width: 10%; }
+.col-quantity { width: 15%; }
+.col-amount { width: 16%; }
+.col-action { width: 13%; }
+.col-date { width: 19%; }
+.col-price { width: 15%; }
+.col-category { width: 13%; }
+.col-image { width: 10%; }
+.col-address { width: 12%; }
+.col-phone { width: 12%; }
+
+.supplier-table .col-name { width: 18%; }
+.supplier-table .col-amount { width: 17%; }
+.import-table .col-name { width: 19%; }
+.import-table .col-amount { width: 19%; }
+.dish-table .col-amount { width: 14%; }
+.dish-table .col-image { width: 128px; }
+.invoice-table .col-name { width: 29%; }
+
+.units {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.units li {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin: 3px 0;
+    white-space: nowrap;
+}
+
+td.quantity-total {
+    text-align: center;
+}
+
+.quantity-total .units li {
+    justify-content: center;
+}
+
+.invoice-summary {
+    max-width: 480px;
+}
+
+.invoice-summary h2 {
+    margin-top: 0;
+}
+
+.quantity-summary {
+    margin: 10px 0 16px;
+}
+
+.summary {
+    margin: 0 0 24px;
+    font-size: 17px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.shell.dish-page {
+    max-width: 840px;
+}
+
+.dish-detail {
+    display: grid;
+    grid-template-columns: minmax(0, 290px) minmax(0, 470px);
+    justify-content: center;
+    gap: 20px;
+}
+
+.dish-detail > div {
+    min-width: 0;
+}
+
+.dish-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 360px;
+    border: 1px solid #b3b3b3;
+    object-fit: contain;
+}
+
+.dish-thumbnail {
+    display: block;
+    width: 110px;
+    height: 82px;
+    max-width: 100%;
+    margin: auto;
+    object-fit: cover;
+}
+
+.dish-detail th {
+    width: 120px;
+    text-align: left;
+}
+
+.dish-info td.dish-value {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.dish-info td.dish-description {
+    text-align: left;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.dish-info {
+    table-layout: fixed;
+    max-width: 470px;
+    margin: 0 auto 22px;
+}
+
+@media (max-width: 740px) {
+    .shell {
+        margin: 12px;
+        padding: 20px 16px;
+    }
+
+    .home {
+        padding-top: 70px;
+        padding-bottom: 32px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .condition-form .form-row,
+    .details,
+    .dish-detail {
+        grid-template-columns: 1fr;
+    }
+
+    .condition-form .form-row {
+        gap: 6px;
+    }
+
+    .period {
+        gap: 12px 24px;
+    }
+
+    .details > div {
+        grid-template-columns: 125px minmax(0, 1fr);
+    }
+
+    .dish-image {
+        max-width: 290px;
+        margin: 0 auto;
+    }
+}

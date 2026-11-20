@@ -28,7 +28,7 @@ public class DishDAO9 extends DAO {
         super();
     }
 
-    public Dish9[] getDishByName(String keyword) throws SQLException {
+    public Dish9[] getDishByName(String keyword) throws SQLException { // nhận từ khóa
         String sql = SELECT_DISH + """
                 WHERE d.name LIKE ? ESCAPE '!'
                 ORDER BY
@@ -36,11 +36,11 @@ public class DishDAO9 extends DAO {
                     d.id
                 """;
         String term = keyword == null ? "" : keyword.strip();
-        term = term.replace("!", "!!").replace("%", "!%").replace("_", "!_");
-        List<Dish9> dishes = new ArrayList<>();
+        term = term.replace("!", "!!").replace("%", "!%").replace("_", "!_"); // xử lí ký tự đặc biệt
+        List<Dish9> dishes = new ArrayList<>(); // tạo danh sách
         try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, "%" + term + "%");
-            try (ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) { // thực thi select và trả về kết quả
                 while (rs.next()) {
                     dishes.add(toDish(rs));
                 }

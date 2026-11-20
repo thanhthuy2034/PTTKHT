@@ -55,9 +55,10 @@ public class DishSearchServlet9 extends HttpServlet {
             request.setAttribute("listDishes", new Dish9[0]);
         } else {
             try {
-                Dish9[] listDishes = Arrays.stream(dishDAO.getDishByName(keyword))
-                        .filter(dish -> !dish.isDiscontinued()).toArray(Dish9[]::new);
-                request.setAttribute("listDishes", listDishes);
+                Dish9[] listDishes = Arrays.stream(dishDAO.getDishByName(keyword)) // gọi DAO
+                        .filter(dish -> !dish.isDiscontinued()) // loại các món đã ngừng phục vụ
+                        .toArray(Dish9[]::new); 
+                request.setAttribute("listDishes", listDishes);// gắn kết quả
                 if (listDishes.length == 0) {
                     request.setAttribute("notification", "Không tìm thấy món ăn phù hợp.");
                 }
@@ -83,7 +84,7 @@ public class DishSearchServlet9 extends HttpServlet {
             int dishId = Integer.parseInt(request.getParameter("id"));
             if (dishId <= 0)
                 throw new NumberFormatException("Invalid dish ID");
-            Dish9 dish = dishDAO.getDishDetail(dishId);
+            Dish9 dish = dishDAO.getDishDetail(dishId); // trả đối tượng món ăn
             if (dish == null || dish.isDiscontinued()) {
                 response.setStatus(
                         dish == null ? HttpServletResponse.SC_NOT_FOUND : HttpServletResponse.SC_GONE);

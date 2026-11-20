@@ -28,7 +28,7 @@ public class DishDAO9 extends DAO {
         super();
     }
 
-    public Dish9[] getDishByName(String keyword) throws SQLException { // nhận từ khóa
+    public Dish9[] getDishByName(String keyword) throws SQLException {
         String sql = SELECT_DISH + """
                 WHERE d.name LIKE ? ESCAPE '!'
                 ORDER BY
@@ -36,11 +36,13 @@ public class DishDAO9 extends DAO {
                     d.id
                 """;
         String term = keyword == null ? "" : keyword.strip();
-        term = term.replace("!", "!!").replace("%", "!%").replace("_", "!_"); // xử lí ký tự đặc biệt
-        List<Dish9> dishes = new ArrayList<>(); // tạo danh sách
+        // Escape ký tự LIKE để %, _ và ! trong từ khóa được tìm như ký tự thường.
+        term = term.replace("!", "!!").replace("%", "!%").replace("_", "!_");
+        List<Dish9> dishes = new ArrayList<>();
         try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            // Gắn từ khóa qua PreparedStatement, thêm % để tìm tên có chứa từ khóa
             ps.setString(1, "%" + term + "%");
-            try (ResultSet rs = ps.executeQuery()) { // thực thi select và trả về kết quả
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     dishes.add(toDish(rs));
                 }
@@ -62,6 +64,7 @@ public class DishDAO9 extends DAO {
     }
 
     private Dish9 toDish(ResultSet rs) throws SQLException {
+        // Ánh xạ một dòng JOIN thành món ăn và danh mục đi kèm
         DishCategory9 category = new DishCategory9();
         category.setId(rs.getInt("categoryId"));
         category.setName(rs.getString("categoryName"));

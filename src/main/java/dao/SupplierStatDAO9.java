@@ -14,6 +14,7 @@ public class SupplierStatDAO9 extends DAO {
 
     public SupplierStat9[] getSupplierStatistics(LocalDate startDate, LocalDate endDate) throws SQLException {
         validateDateRange(startDate, endDate);
+        // SUM và GROUP BY cộng lượng, tiền nhập theo từng nhà cung cấp và đơn vị tính
         String sql = """
                 SELECT
                     s.id AS supplierId,
@@ -52,6 +53,7 @@ public class SupplierStatDAO9 extends DAO {
         Map<Integer, BigDecimal> amounts = new LinkedHashMap<>();
         try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setObject(1, startDate.atStartOfDay());
+            // Cận trên là đầu ngày kế tiếp để lấy đủ mọi thời điểm trong ngày kết thúc
             ps.setObject(2, endDate.plusDays(1).atStartOfDay());
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -90,6 +92,7 @@ public class SupplierStatDAO9 extends DAO {
             stat.setDescription(supplier.getDescription());
             result.add(stat);
         }
+        // Xếp tổng tiền nhập giảm dần; nếu bằng nhau thì xếp theo mã nhà cung cấp tăng dần
         return result.stream()
                 .sorted(Comparator.comparing(SupplierStat9::getTotalImportAmount).reversed()
                         .thenComparingInt(SupplierStat9::getId))

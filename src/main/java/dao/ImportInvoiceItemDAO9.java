@@ -31,6 +31,7 @@ public class ImportInvoiceItemDAO9 extends DAO {
             ps.setInt(1, invoiceId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
+                    // Mỗi dòng JOIN tạo một chi tiết nhập gắn với nguyên liệu và đơn vị tính tương ứng
                     Material9 material = new Material9();
                     material.setId(rs.getInt("materialId"));
                     material.setName(rs.getString("materialName"));

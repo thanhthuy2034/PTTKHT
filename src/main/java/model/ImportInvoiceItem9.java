@@ -45,6 +45,7 @@ public class ImportInvoiceItem9 {
     }
 
     public BigDecimal getAmount() {
+        // Nhân số lượng với giá nhập
         return quantity.multiply(importPrice);
     }
 

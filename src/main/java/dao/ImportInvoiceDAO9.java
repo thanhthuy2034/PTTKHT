@@ -57,10 +57,12 @@ public class ImportInvoiceDAO9 extends DAO {
                     inv.id ASC,
                     i.id
                 """;
+        // LinkedHashMap gom các dòng cùng hóa đơn và giữ thứ tự ngày, mã do SQL sắp xếp
         Map<Integer, ImportInvoice9> result = new LinkedHashMap<>();
         try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, supplierId);
             ps.setObject(2, startDate.atStartOfDay());
+            // Lọc trước đầu ngày kế tiếp để bao gồm trọn ngày kết thúc.
             ps.setObject(3, endDate.plusDays(1).atStartOfDay());
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next())
@@ -92,6 +94,7 @@ public class ImportInvoiceDAO9 extends DAO {
     private void addRow(Map<Integer, ImportInvoice9> result, ResultSet rs) throws SQLException {
         int invoiceId = rs.getInt("invoiceId");
         ImportInvoice9 invoice = result.get(invoiceId);
+        // Chỉ ánh xạ thông tin hóa đơn, nhà cung cấp và nhân viên kho ở dòng đầu tiên
         if (invoice == null) {
             invoice = new ImportInvoice9();
             invoice.setId(invoiceId);
@@ -117,6 +120,7 @@ public class ImportInvoiceDAO9 extends DAO {
             invoice.setStorekeeper(storekeeper);
             result.put(invoiceId, invoice);
         }
+        // LEFT JOIN vẫn trả hóa đơn rỗng; chỉ gắn chi tiết khi dòng có itemId
         if (rs.getObject("itemId") != null) {
             Material9 material = new Material9();
             material.setId(rs.getInt("materialId"));

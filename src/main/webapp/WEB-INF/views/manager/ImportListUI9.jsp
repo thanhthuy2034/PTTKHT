@@ -111,6 +111,7 @@
                                 <td class="money">
                                     <fmt:formatNumber value="${invoice.totalAmount}" maxFractionDigits="5"/>đ
                                 </td>
+                                <%-- report giữ khoảng ngày; supplierId và invoiceId xác định hóa đơn cần đối chiếu. --%>
                                 <c:url var="detailUrl" value="/supplier-statistics">
                                     <c:param name="report" value="${report}"/>
                                     <c:param name="invoiceId" value="${invoice.id}"/>

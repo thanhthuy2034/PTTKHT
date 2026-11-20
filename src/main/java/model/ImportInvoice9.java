@@ -37,6 +37,7 @@ public class ImportInvoice9 {
     }
 
     public BigDecimal getTotalAmount() {
+        // Cộng thành tiền các chi tiết bằng BigDecimal; hóa đơn rỗng có tổng bằng 0
         return importInvoiceItems.stream().map(ImportInvoiceItem9::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -90,6 +91,7 @@ public class ImportInvoice9 {
     }
 
     public Map<String, BigDecimal> getTotalImportQuantityByUnit() {
+        // Chỉ cộng số lượng cùng đơn vị tính để tránh gộp lẫn kg, lít, chai...
         Map<String, BigDecimal> quantities = new LinkedHashMap<>();
         for (ImportInvoiceItem9 item : importInvoiceItems) {
             quantities.merge(item.getMaterial().getUnit(), item.getQuantity(), BigDecimal::add);

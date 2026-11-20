@@ -25,6 +25,7 @@ public class DishSearchServlet9 extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+        // Ưu tiên xem chi tiết theo id, rồi tìm theo q; thiếu cả hai thì mở trang tìm kiếm
         if (request.getParameter("id") != null) {
             viewDishDetail(request, response);
         } else if (request.getParameter("q") != null) {
@@ -46,6 +47,7 @@ public class DishSearchServlet9 extends HttpServlet {
         String keyword = request.getParameter("q");
         keyword = keyword == null ? "" : keyword.strip();
         request.setAttribute("keyword", keyword);
+        // Chỉ truy vấn khi từ khóa không rỗng và không vượt giới hạn độ dài
         if (keyword.isEmpty()) {
             request.setAttribute("listDishes", new Dish9[0]);
             request.setAttribute("notification", "Vui lòng nhập tên món ăn.");
@@ -55,10 +57,10 @@ public class DishSearchServlet9 extends HttpServlet {
             request.setAttribute("listDishes", new Dish9[0]);
         } else {
             try {
-                Dish9[] listDishes = Arrays.stream(dishDAO.getDishByName(keyword)) // gọi DAO
+                Dish9[] listDishes = Arrays.stream(dishDAO.getDishByName(keyword))
                         .filter(dish -> !dish.isDiscontinued()) // loại các món đã ngừng phục vụ
                         .toArray(Dish9[]::new); 
-                request.setAttribute("listDishes", listDishes);// gắn kết quả
+                request.setAttribute("listDishes", listDishes);
                 if (listDishes.length == 0) {
                     request.setAttribute("notification", "Không tìm thấy món ăn phù hợp.");
                 }
@@ -69,6 +71,7 @@ public class DishSearchServlet9 extends HttpServlet {
                 request.setAttribute("notification", "Không thể truy vấn dữ liệu món ăn.");
             }
         }
+        // Giữ thông báo món không còn phục vụ khi quay về kết quả tìm kiếm, trừ lỗi truy vấn
         if (request.getAttribute("unavailableDishNotification") != null
                 && response.getStatus() != HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
             request.setAttribute("notification", request.getAttribute("unavailableDishNotification"));
@@ -84,7 +87,8 @@ public class DishSearchServlet9 extends HttpServlet {
             int dishId = Integer.parseInt(request.getParameter("id"));
             if (dishId <= 0)
                 throw new NumberFormatException("Invalid dish ID");
-            Dish9 dish = dishDAO.getDishDetail(dishId); // trả đối tượng món ăn
+            Dish9 dish = dishDAO.getDishDetail(dishId);
+            // Trả về kết quả theo từ khóa cũ nếu món đã bị xóa hoặc ngừng phục vụ
             if (dish == null || dish.isDiscontinued()) {
                 response.setStatus(
                         dish == null ? HttpServletResponse.SC_NOT_FOUND : HttpServletResponse.SC_GONE);
@@ -107,6 +111,7 @@ public class DishSearchServlet9 extends HttpServlet {
 
     private void show(HttpServletRequest request, HttpServletResponse response, String file)
             throws ServletException, IOException {
+        // Chuyển nội bộ sang JSP, giữ các thuộc tính đã gắn trên request
         request.getRequestDispatcher(file).forward(request, response);
     }
 

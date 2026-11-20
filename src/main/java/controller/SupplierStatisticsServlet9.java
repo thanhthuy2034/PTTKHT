@@ -51,6 +51,7 @@ public class SupplierStatisticsServlet9 extends HttpServlet {
         }
         HttpSession session = request.getSession(false);
         String csrf = request.getParameter("csrfToken");
+        // Đối chiếu CSRF token với phiên trước khi nhận điều kiện thống kê
         if (session == null || csrf == null || !csrf.equals(session.getAttribute("csrfToken"))) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Phiên làm việc không hợp lệ. Vui lòng tải lại trang.");
             return;
@@ -67,8 +68,10 @@ public class SupplierStatisticsServlet9 extends HttpServlet {
         try {
             LocalDate start = LocalDate.parse(request.getParameter("startDate"));
             LocalDate end = LocalDate.parse(request.getParameter("endDate"));
+            // Kiểm tra thứ tự ngày, giới hạn năm và ngày kết thúc không vượt hôm nay
             DAO.validateDateRange(start, end);
             String report = saveRange(session, new ReportRange(start, end));
+            // HTTP 303 chuyển sang GET để tải lại kết quả không gửi lại biểu mẫu POST
             response.setStatus(HttpServletResponse.SC_SEE_OTHER);
             response.setHeader("Location", request.getContextPath()
                     + "/supplier-statistics?report=" + report);
@@ -87,9 +90,14 @@ public class SupplierStatisticsServlet9 extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String report = request.getParameter("report");
+        
         boolean conditions = "/supplier-statistics/conditions".equals(request.getServletPath());
+
         boolean invoiceDetail = request.getParameter("invoiceId") != null;
+
         boolean importList = request.getParameter("supplierId") != null;
+
+        // Khôi phục khoảng ngày từ report trong phiên; mã hết hạn thì yêu cầu chọn lại
         ReportRange range = findRange(request.getSession(false), report);
         if (report != null && range == null) {
             response.setStatus(HttpServletResponse.SC_GONE);
@@ -113,6 +121,7 @@ public class SupplierStatisticsServlet9 extends HttpServlet {
             return;
         }
         try {
+            // Ưu tiên chi tiết hóa đơn, rồi danh sách nhập; còn lại là thống kê nhà cung cấp
             if (invoiceDetail) {
                 viewInvoiceDetail(request, response, range);
             } else if (importList) {
@@ -151,6 +160,7 @@ public class SupplierStatisticsServlet9 extends HttpServlet {
     private void viewImportList(HttpServletRequest request, HttpServletResponse response, ReportRange range)
             throws SQLException, ServletException, IOException {
         int supplierId = positiveId(request.getParameter("supplierId"));
+        // Chỉ cho xem các lần nhập của nhà cung cấp có trong kết quả thống kê đã chọn
         Supplier9 supplier = Arrays.stream(supplierStatDAO.getSupplierStatistics(range.startDate, range.endDate))
                 .filter(stat -> stat.getId() == supplierId).findFirst().orElse(null);
         if (supplier == null) {
@@ -170,6 +180,7 @@ public class SupplierStatisticsServlet9 extends HttpServlet {
         int invoiceId = positiveId(request.getParameter("invoiceId"));
         int supplierId = positiveId(request.getParameter("supplierId"));
         ImportInvoice9 invoice = importInvoiceDAO.getImportInvoiceDetail(invoiceId);
+        // Đối chiếu hóa đơn với cả nhà cung cấp và khoảng ngày để chặn URL sai phạm vi
         if (invoice == null || invoice.getSupplier().getId() != supplierId
                 || invoice.getImportDate().toLocalDate().isBefore(range.startDate)
                 || invoice.getImportDate().toLocalDate().isAfter(range.endDate)) {
@@ -194,13 +205,14 @@ public class SupplierStatisticsServlet9 extends HttpServlet {
 
     @SuppressWarnings("unchecked")
     private String saveRange(HttpSession session, ReportRange range) {
+        // Lưu mỗi khoảng ngày bằng mã riêng trong phiên để các tab không ghi đè điều kiện nhau
         synchronized (session) {
             Map<String, ReportRange> reports = (Map<String, ReportRange>) session.getAttribute(REPORTS);
             if (reports == null) {
                 reports = new LinkedHashMap<>();
                 session.setAttribute(REPORTS, reports);
             }
-            // Bound session memory; old report URLs explicitly ask the user to select again.
+            
             if (reports.size() >= 20) {
                 reports.remove(reports.keySet().iterator().next());
             }
@@ -217,6 +229,7 @@ public class SupplierStatisticsServlet9 extends HttpServlet {
 
     @SuppressWarnings("unchecked")
     private ReportRange findRange(HttpSession session, String token) {
+        // Chỉ tra mã báo cáo trong phiên hiện tại, không nhận khoảng ngày từ URL
         if (session == null || token == null) {
             return null;
         }
@@ -228,6 +241,7 @@ public class SupplierStatisticsServlet9 extends HttpServlet {
 
     private void show(HttpServletRequest request, HttpServletResponse response, String file)
             throws ServletException, IOException {
+        // Chuyển nội bộ sang JSP, giữ dữ liệu và điều kiện thống kê trên request.
         request.getRequestDispatcher(file).forward(request, response);
     }
 
